@@ -78,7 +78,7 @@ def extract_api(start,end,headers,filePath):
       page=page+1
     except Exception as e:
       print(f'error fetching,{e}')
-      # time.sleep(1)
+      time.sleep(1)
       page=page
   data_file.close()
 

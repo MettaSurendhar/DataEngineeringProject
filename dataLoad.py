@@ -15,16 +15,21 @@ def createTables():
 
 ### LoadData Method:
 def loadData(tableName,df,colNames=0):
-    conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004")
-    engine = create_engine('postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering')
-    
-    if colNames!=0:
-        df = df.rename(columns=colNames)
+    flag=False
+    while(flag!=True):
+        conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004")
+        engine = create_engine('postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering')
 
-    df.to_sql(name=tableName, con=engine, if_exists='append', index=False, method='multi', chunksize=1000)
-    print('done!')
-    conn.commit()
-    conn.close()
+        if colNames!=0:
+            df = df.rename(columns=colNames)
+        try:
+            df.to_sql(name=tableName, con=engine, if_exists='append', index=False, method='multi', chunksize=1000)
+            print('done!')
+            conn.commit()
+            conn.close()
+            flag=True
+        except Exception as e:
+            print('error loading')
 
 
 ### Main Method : 
