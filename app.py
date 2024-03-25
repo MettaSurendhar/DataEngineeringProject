@@ -149,7 +149,49 @@ def getJsonBackdropMoviesFiles():
   response = [dict(record) for record in records]
   return jsonify(response)
 
+### ogMoviesData getAll APIs:
+
+@app.route('/api/json/ogMoviesData/all', methods=['GET'])
+def getJsonAllOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogTitle",mf."ogLanguage",mf."isAdult" from "ogMoviesData" as mf Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
+@app.route('/api/json/ogMoviesData/all/raw', methods=['GET'])
+def getJsonRawAllOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT * FROM "ogMoviesData" ')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
+@app.route('/api/json/ogMoviesData/all/title', methods=['GET'])
+def getJsonTitleOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogTitle" from "ogMoviesData" as mf Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
+@app.route('/api/json/ogMoviesData/all/language', methods=['GET'])
+def getJsonLanguageOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogLanguage" from "ogMoviesData" as mf Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
+
+
+#?-----------------------------------------------------------------------------------
 ### --------------> #TODO# Returns Array of Arrays (df):
+#?------------------------------------------------------------------------------------
 
 ### Genre getAll APIs:
 @app.route('/api/data/genres/all', methods=['GET'])
@@ -270,7 +312,42 @@ def getDataRawAllMoviesFiles():
   records = cur.fetchall()
   return jsonify(records)
 
+### ogMoviesData getAll APIs:
 
+@app.route('/api/data/ogMoviesData/all', methods=['GET'])
+def getDataAllOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogTitle",mf."ogLanguage",mf."isAdult" from "ogMoviesData" as mf 
+Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  return jsonify(records)
+
+@app.route('/api/data/ogMoviesData/all/raw', methods=['GET'])
+def getDataRawAllOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT * from "ogMoviesData"')
+  records = cur.fetchall()
+  return jsonify(records)
+
+@app.route('/api/data/ogMoviesData/all/title', methods=['GET'])
+def getDataTitleOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogTitle" from "ogMoviesData" as mf 
+Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  return jsonify(records)
+
+@app.route('/api/data/ogMoviesData/all/language', methods=['GET'])
+def getDataLanguageOgMoviesData():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT mf."movieId",md.title,mf."ogLanguage" from "ogMoviesData" as mf 
+Inner Join "moviesData" as md on mf."movieId" = md."movieId" ORDER BY "movieId" ASC')
+  records = cur.fetchall()
+  return jsonify(records)
 
 if __name__ == '__main__':
   app.run(port=5000)
