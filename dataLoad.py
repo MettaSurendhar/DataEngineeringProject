@@ -3,23 +3,37 @@ import pandas as pd
 from sqlalchemy import create_engine
 from multiprocessing import Process
 
-### LoadData Method :
-def loadData(tableName,df,colNames=0):
+### Table Creation Method:
+def createTables():
+    conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004")
+    cur = conn.cursor()
+    with open('./dataSchema.sql', 'r') as file:
+        dataSchema = file.read()
+        cur.execute(f"""{dataSchema}""")
+    conn.commit()
+    conn.close()
 
+### LoadData Method:
+def loadData(tableName,df,colNames=0):
+    conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004")
+    engine = create_engine('postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering')
+    
     if colNames!=0:
         df = df.rename(columns=colNames)
 
     df.to_sql(name=tableName, con=engine, if_exists='append', index=False, method='multi', chunksize=1000)
     print('done!')
     conn.commit()
+    conn.close()
 
 
 ### Main Method : 
 if __name__ == '__main__': 
-    
-    conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004")
-    cur = conn.cursor()
-    engine = create_engine('postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering')
+
+    ### create tables :
+    print('Creating Tables....')
+    createTables()
+    print('Tables created!')
 
     ## Genre file path :
     dfGenre = pd.read_csv('./genreList.csv')
@@ -41,45 +55,40 @@ if __name__ == '__main__':
     ## movieGenres 
     movieGenres = df[['genre_ids','id']]
     movieGenresCols = {'id':'movieId','genre_ids':'genreId'}
-    
-    ### create tables :
-    with open('./dataSchema.sql', 'r') as file:
-        dataSchema = file.read()
-        cur.execute(f"""{dataSchema}""")
-    conn.commit()
-    print('created table')
 
     processes = []
-  
     ### Load Genre :
     p1 = Process(target=loadData,args=('Genres',dfGenre))
     processes.append(p1)
     p1.start()
+    print('started p1')
 
     ### Load moviesData :
     p2 = Process(target=loadData,args=('moviesData',moviesData,moviesDataCols))
     processes.append(p2)
     p2.start()
+    print('started p2')
 
     ### Load moviesFiles :
     p3 = Process(target=loadData,args=('moviesFiles',moviesFiles,moviesFilesCols))
     processes.append(p3)
     p3.start()
+    print('started p3')
 
     ### Load moviesGenres :
     p4 = Process(target=loadData,args=('movieGenres',movieGenres,movieGenresCols))
     processes.append(p4)
     p4.start()
+    print('started p4')
 
     ### Load ogMoviesData :
     p5 = Process(target=loadData,args=('ogMoviesData',ogMoviesData,ogMoviesDataCols))
     processes.append(p5)
     p5.start()
+    print('started p5')
 
     ### join all 
     for p in processes:
         p.join()
-
-    conn.close()
 
 
