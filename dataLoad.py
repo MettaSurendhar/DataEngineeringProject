@@ -39,9 +39,6 @@ if __name__ == '__main__':
     ogMoviesDataCols = {'id':'movieId','adult': 'isAdult', 'original_language': 'ogLanguage','original_title':'ogTitle'}
 
     ## movieGenres 
-    df['genre_ids'] = df['genre_ids'].str.replace('[', '').str.replace(']', '').str.split(',').str[0]
-    df['genre_ids'] = df['genre_ids'].astype(str).replace('', '10770')
-    df['genre_ids'] = df['genre_ids'].astype(int)
     movieGenres = df[['genre_ids','id']]
     movieGenresCols = {'id':'movieId','genre_ids':'genreId'}
     
