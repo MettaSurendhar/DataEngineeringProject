@@ -1,3 +1,11 @@
 {
-	"cSpell.words": ["chunksize", "pkey", "psycopg", "sqlalchemy", "Suren"]
+	"cSpell.words": [
+		"astype",
+		"chunksize",
+		"fillna",
+		"pkey",
+		"psycopg",
+		"sqlalchemy",
+		"Suren"
+	]
 }
