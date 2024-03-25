@@ -26,15 +26,15 @@ DROP TABLE IF EXISTS public."moviesData";
 
 CREATE TABLE IF NOT EXISTS public."moviesData"
 (
-    id integer NOT NULL,
+    id serial NOT NULL,
+    "movieId" integer NOT NULL,
     title text NOT NULL,
     overview text,
     popularity float,
     "releaseDate" date,
     rating float,
     "voteCount" integer,
-    PRIMARY KEY (id),
-    CONSTRAINT "movieId" UNIQUE (id)
+    PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS public.files;
@@ -112,12 +112,23 @@ print('created table')
 # host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004
 
 
+### genre :
 
-print('created engine')
 df = pd.read_csv('./genreList.csv')
 print('read file')
 
 df.to_sql(name='Genres', con=engine, if_exists='append', index=False)
+print('done!')
+conn.commit()
+
+### moviesData :
+
+df = pd.read_csv('./moviesList.csv')
+moviesData = df[['id','title', 'overview','popularity','release_date','vote_average','vote_count']]
+column_names = {'id':'movieId','release_date': 'releaseDate', 'vote_average': 'rating','vote_count':'voteCount'}
+moviesData = moviesData.rename(columns=column_names)
+
+moviesData.to_sql(name='moviesData', con=engine, if_exists='append', index=False, method='multi', chunksize=1000)
 print('done!')
 conn.commit()
 
