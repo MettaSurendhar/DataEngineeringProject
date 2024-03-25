@@ -1,12 +1,11 @@
-
-#TODO Movie List : 
-#? page 1 - 500 
-#** Things have to see : popularity(popular) , vote average(top rated) , genre_ids(genre) , original_language(lang) , release_date , title , og title ,
-
 import requests
 import csv
 import time
 from multiprocessing import Process
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ### Extract Genre Method : 
 def genre_extract(genreFilePath,headers):
@@ -14,7 +13,7 @@ def genre_extract(genreFilePath,headers):
   while(flag!=True):
     print(flag,'genre')
     data_file = open(genreFilePath, 'a', encoding='utf-8', newline='')
-    url = "https://api.themoviedb.org/3/genre/movie/list?language=en"
+    url = f"{os.getenv('GENRE_LIST_API')}"
     try:
       response = requests.get(url, headers=headers)
       json_data = response.json()['genres']
@@ -38,7 +37,7 @@ def extract_page1(filePath,headers):
   while(flag!=True):
     print(flag,'page1')
     data_file = open(filePath, 'a', encoding='utf-8', newline='')
-    url = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
+    url = f"{os.getenv('MOVIE_LIST_API')}&page=1"
     try:
       response = requests.get(url, headers=headers)
       json_data = response.json()['results']
@@ -62,7 +61,7 @@ def extract_api(start,end,headers,filePath):
   page=start
   while page<=end:
     print(page)
-    url = f"https://api.themoviedb.org/3/movie/popular?language=en-US&page={page}"
+    url = f"{os.getenv('MOVIE_LIST_API')}&page={page}"
 
     try:
       response = requests.get(url, headers=headers)
@@ -88,7 +87,7 @@ if __name__ == '__main__':
 
   headers = {
       "accept": "application/json",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MWY5YzYzNGMwMWIyZjA4ZmI0MDNkZWExNzdiOTIyNSIsInN1YiI6IjY1ZmU5ZTc2MDQ3MzNmMDE3ZGVjNjBmNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mvfphI1NIKujcbUUTZ0-dX9pN0sefVmbdj3uwMEHsj0"
+      "Authorization": f"Bearer {os.getenv('API_KEY')}"
   }
   moviesFilePath='./moviesList.csv'
   genreFilePath='./genreList.csv'
