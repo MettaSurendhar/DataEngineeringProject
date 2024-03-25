@@ -1,4 +1,3 @@
-.env
-filteredMoviesList.csv
-genreList.csv
-moviesList.csv
+.vscode/
+.env* 
+.csv*
