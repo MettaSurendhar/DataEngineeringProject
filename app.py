@@ -7,17 +7,12 @@ from psycopg2.extras import DictCursor
 
 load_dotenv()
 
-
-
-
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 @app.route('/api',methods=['GET'])
 def get_init():
   return '<center><h1 style="margin:0;padding:0;text-align:center;margin-top:45vh;font-size:48px;">Welcome to Metta&#39s Movie API<h1/><center/>'
-
-[]
 
 apiList = []
 with open('./data.json', 'r') as file:
@@ -893,6 +888,14 @@ def getDataMoviesCountMoviesGenres():
   conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
   cur = conn.cursor()
   cur.execute(f'SELECT ge."name" as "Genre",COUNT(*) as "moviesCount"  from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" GROUP BY ge."name" ORDER BY "moviesCount" DESC')
+  records = cur.fetchall()
+  return jsonify(records)
+
+@app.route('/api/data/moviesGenres/popular/movies', methods=['GET'])
+def getDataMoviesPopularMoviesGenres():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT ge."name" as "Genre",(Select md2."title" from "moviesData" as md2 Inner Join "movieGenres" as mg2 on md2."movieId" = mg2."movieId" Where mg2."genreId" = ge."id" Order by md2."popularity" DESC Limit 1) as "popularMovie"  from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" GROUP BY ge."id",ge."name" ORDER BY "Genre" ASC')
   records = cur.fetchall()
   return jsonify(records)
 
