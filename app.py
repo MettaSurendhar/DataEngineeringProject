@@ -428,6 +428,26 @@ def getJsonRawAllMovieGenresLimit(limit: int):
   response = [dict(record) for record in records]
   return jsonify(response)
 
+### moviesGenres filtering APIs:
+
+@app.route('/api/json/movieGenres/count/movies', methods=['GET'])
+def getJsonMoviesCountMoviesGenres():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT ge."name" as "Genre",COUNT(*) as "moviesCount"  from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" GROUP BY ge."name" ORDER BY "moviesCount" DESC')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
+@app.route('/api/json/movieGenres/popular/movies', methods=['GET'])
+def getJsonMoviesPopularMoviesGenres():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor(cursor_factory=DictCursor)
+  cur.execute(f'SELECT ge."name" as "Genre",(Select md2."title" from "moviesData" as md2 Inner Join "movieGenres" as mg2 on md2."movieId" = mg2."movieId" Where mg2."genreId" = ge."id" Order by md2."popularity" DESC Limit 1) as "popularMovie"  from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" GROUP BY ge."id",ge."name" ORDER BY "Genre" ASC')
+  records = cur.fetchall()
+  response = [dict(record) for record in records]
+  return jsonify(response)
+
 ### movieGenres getAll genreId APIs:
 
 @app.route('/api/json/movieGenres/genre/<int:id>', methods=['GET'])
@@ -853,6 +873,16 @@ def getDataGenreIdMoviesGenresLimit(id:int,limit:int):
   conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
   cur = conn.cursor()
   cur.execute(f'SELECT mg."movieId",md.title,md.overview,md."releaseDate"   from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" WHERE mg."genreId" = {id} ORDER BY "movieId" ASC Limit {limit}')
+  records = cur.fetchall()
+  return jsonify(records)
+
+### moviesGenres filtering APIs:
+
+@app.route('/api/data/moviesGenres/count/movies', methods=['GET'])
+def getDataMoviesCountMoviesGenres():
+  conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+  cur = conn.cursor()
+  cur.execute(f'SELECT ge."name" as "Genre",COUNT(*) as "moviesCount"  from  "movieGenres" as mg Inner Join "moviesData" as md on mg."movieId" = md."movieId" Inner Join "Genres" as ge on mg."genreId" = ge."id" GROUP BY ge."name" ORDER BY "moviesCount" DESC')
   records = cur.fetchall()
   return jsonify(records)
 
