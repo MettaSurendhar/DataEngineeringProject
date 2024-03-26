@@ -17,6 +17,16 @@ app = Flask(__name__)
 def get_init():
   return '<center><h1 style="margin:0;padding:0;text-align:center;margin-top:45vh;font-size:48px;">Welcome to Metta&#39s Movie API<h1/><center/>'
 
+[]
+
+apiList = []
+with open('./data.json', 'r') as file:
+  apiList.append(json.load(file))
+
+@app.route('/api/all',methods=['GET'])
+def getAllAPI():
+  return jsonify(apiList)
+
 #?--------------------------------------------------------------------------------
 ### --------------> #TODO# Return Array of Objects:
 #?--------------------------------------------------------------------------------
