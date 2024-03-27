@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  database:
+    image: postgres
+    ports:
+      - '5432:5432'
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Suren@19_2004
+      POSTGRES_DB: dataEngineering
+    volumes:
+      - postgres-de-database:/var/lib/postgresql
+    networks:
+      - mynetwork
+
+  adminer:
+    image: python-de
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - '8080:8080'
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres-de-database:

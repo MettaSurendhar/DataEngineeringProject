@@ -2,27 +2,30 @@ import psycopg2
 import pandas as pd
 from sqlalchemy import create_engine
 from multiprocessing import Process
-import os
+# import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 ### Table Creation Method:
 def createTables():
-    conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
-    cur = conn.cursor()
-    with open('./dataSchema.sql', 'r') as file:
-        dataSchema = file.read()
-        cur.execute(f"""{dataSchema}""")
-    conn.commit()
-    conn.close()
+    try:
+        conn = psycopg2.connect("host=database dbname=dataEngineering user=postgres password=Suren@19_2004")
+        cur = conn.cursor()
+        with open('./dataSchema.sql', 'r') as file:
+            dataSchema = file.read()
+            cur.execute(dataSchema)
+        conn.commit()
+        conn.close()
+    except psycopg2.OperationalError as e:
+        print(f"Error creating tables: {e}")
 
 ### LoadData Method:
 def loadData(tableName,df,colNames=0):
     flag=False
-    while(flag!=True):
-        conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
-        engine = create_engine(f'postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}')
+    while not flag:
+        conn = psycopg2.connect("host=database dbname=dataEngineering user=postgres password=Suren@19_2004")
+        engine = create_engine("postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering")
 
         if colNames!=0:
             df = df.rename(columns=colNames)
@@ -32,8 +35,9 @@ def loadData(tableName,df,colNames=0):
             conn.commit()
             conn.close()
             flag=True
-        except Exception as e:
-            print('error loading')
+        except psycopg2.OperationalError as e:
+            print(f"Error loading data into table {tableName}: {e}")
+            print("Retrying...")
 
 
 ### Main Method : 

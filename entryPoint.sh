@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Initializing Data Pipeline...."
 python ./dataExtraction.py
 echo  "Completed Extraction !"
