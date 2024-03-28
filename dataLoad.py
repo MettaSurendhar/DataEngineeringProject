@@ -2,7 +2,7 @@ import psycopg2
 import pandas as pd
 from sqlalchemy import create_engine
 from multiprocessing import Process
-# import os
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +10,7 @@ load_dotenv()
 ### Table Creation Method:
 def createTables():
     try:
-        conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004 port=5432")
+        conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
         cur = conn.cursor()
         with open('./dataSchema.sql', 'r') as file:
             dataSchema = file.read()
@@ -24,8 +24,8 @@ def createTables():
 def loadData(tableName,df,colNames=0):
     flag=False
     while not flag:
-        conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004 port=5432")
-        engine = create_engine("postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering")
+        conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')}")
+        engine = create_engine(f"postgresql://{os.getenv('DB_USER')}:{os.getenv('ENGINE_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
 
         if colNames!=0:
             df = df.rename(columns=colNames)

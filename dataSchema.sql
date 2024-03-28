@@ -28,15 +28,14 @@ CREATE TABLE IF NOT EXISTS public."movieGenres"
 CREATE TABLE IF NOT EXISTS public."moviesData"
 (
     id serial NOT NULL,
-    "movieId" integer NOT NULL,
+    "movieId" integer NOT NULL UNIQUE,
     title text COLLATE pg_catalog."default" NOT NULL,
     overview text COLLATE pg_catalog."default",
     popularity double precision NOT NULL,
     "releaseDate" date,
     rating double precision NOT NULL,
     "voteCount" integer,
-    CONSTRAINT "moviesData_pkey" PRIMARY KEY (id),
-    CONSTRAINT "moviesData_movieId_unique" UNIQUE ("movieId")
+    CONSTRAINT "moviesData_pkey" PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public."ogMoviesData"
@@ -53,31 +52,27 @@ ALTER TABLE IF EXISTS public."moviesFiles"
     ADD CONSTRAINT "movieId" FOREIGN KEY ("movieId")
     REFERENCES public."moviesData" ("movieId") MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+    ON DELETE CASCADE;
 
 
 ALTER TABLE IF EXISTS public."movieGenres"
     ADD CONSTRAINT "genreId" FOREIGN KEY ("genreId")
     REFERENCES public."Genres" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+    ON DELETE CASCADE;
 
 
 ALTER TABLE IF EXISTS public."movieGenres"
     ADD CONSTRAINT "movieId" FOREIGN KEY ("movieId")
     REFERENCES public."moviesData" ("movieId") MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+    ON DELETE CASCADE; 
 
 
 ALTER TABLE IF EXISTS public."ogMoviesData"
     ADD CONSTRAINT "movieId" FOREIGN KEY ("movieId")
     REFERENCES public."moviesData" ("movieId") MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+    ON DELETE CASCADE;
 
 END;
