@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public."moviesFiles"
     "movieId" integer NOT NULL,
     "posterPath" text COLLATE pg_catalog."default",
     "backdropPath" text COLLATE pg_catalog."default",
-    CONSTRAINT files_pkey PRIMARY KEY (id)
+    CONSTRAINT "moviesFiles_pkey" PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public."movieGenres"
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public."moviesData"
     rating double precision NOT NULL,
     "voteCount" integer,
     CONSTRAINT "moviesData_pkey" PRIMARY KEY (id),
-    CONSTRAINT "movieId" UNIQUE ("movieId")
+    CONSTRAINT "moviesData_movieId_unique" UNIQUE ("movieId")
 );
 
 CREATE TABLE IF NOT EXISTS public."ogMoviesData"

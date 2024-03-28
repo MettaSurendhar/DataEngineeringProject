@@ -10,7 +10,7 @@ load_dotenv()
 ### Table Creation Method:
 def createTables():
     try:
-        conn = psycopg2.connect("host=database dbname=dataEngineering user=postgres password=Suren@19_2004")
+        conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004 port=5432")
         cur = conn.cursor()
         with open('./dataSchema.sql', 'r') as file:
             dataSchema = file.read()
@@ -24,7 +24,7 @@ def createTables():
 def loadData(tableName,df,colNames=0):
     flag=False
     while not flag:
-        conn = psycopg2.connect("host=database dbname=dataEngineering user=postgres password=Suren@19_2004")
+        conn = psycopg2.connect("host=localhost dbname=dataEngineering user=postgres password=Suren@19_2004 port=5432")
         engine = create_engine("postgresql://postgres:Suren%4019_2004@localhost:5432/dataEngineering")
 
         if colNames!=0:
